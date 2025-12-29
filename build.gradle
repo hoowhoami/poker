@@ -1,112 +1,74 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        maven {
-            url "http://nexus.devops.axinfu.com/repository/maven-public/"
-            allowInsecureProtocol(true)
-            credentials {
-                username = 'jiangliangtong'
-                password = 'abcde_1234'
-            }
-        }
-        maven {
-            url "http://nexus.devops.axinfu.com/repository/maven-releases/"
-            allowInsecureProtocol(true)
-            credentials {
-                username = 'jiangliangtong'
-                password = 'abcde_1234'
-            }
-        }
-        maven {
-            url "http://nexus.devops.axinfu.com/repository/maven-thirdparty/"
-            allowInsecureProtocol(true)
-            credentials {
-                username = 'jiangliangtong'
-                password = 'abcde_1234'
-            }
-        }
-        jcenter()
-    }
-    dependencies {
-        classpath(
-                'org.springframework.boot:spring-boot-gradle-plugin:3.2.4'
-        )
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.0'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.java.poker'
+version = '1.0.0'
+description = 'poker'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-allprojects {
-//    apply plugin: 'java'
-    apply plugin: 'java-library'
-    group = 'org.swordsmen'
-    version = '1.0.0'
-    sourceCompatibility = '21'
-    targetCompatibility = '21'
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
-subprojects {
-//    apply plugin: 'java'
-    apply plugin: 'java-library'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-
-    repositories {
-        mavenLocal()
-        maven {
-            url "http://nexus.devops.axinfu.com/repository/maven-public/"
-            allowInsecureProtocol(true)
-            credentials {
-                username = 'jiangliangtong'
-                password = 'abcde_1234'
-            }
-        }
-        maven {
-            url "http://nexus.devops.axinfu.com/repository/maven-releases/"
-            allowInsecureProtocol(true)
-            credentials {
-                username = 'jiangliangtong'
-                password = 'abcde_1234'
-            }
-        }
-        maven {
-            url "http://nexus.devops.axinfu.com/repository/maven-thirdparty/"
-            allowInsecureProtocol(true)
-            credentials {
-                username = 'jiangliangtong'
-                password = 'abcde_1234'
-            }
-        }
-        jcenter()
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+    maven {
+        name = 'Central Portal Snapshots'
+        url = 'https://central.sonatype.com/repository/maven-snapshots/'
     }
+}
 
-    dependencyManagement {
-        dependencies {
-            imports {
-//                mavenBom 'com.axin.tool:axin-tool-dependencies:2.2.1'
-            }
-            dependency 'org.projectlombok:lombok:1.18.32'
-        }
+dependencyManagement {
+    imports {
+        mavenBom "com.baomidou:mybatis-plus-bom:3.5.15"
     }
-
     dependencies {
-
-        annotationProcessor 'org.projectlombok:lombok'
-        compileOnly 'org.projectlombok:lombok'
-        testAnnotationProcessor 'org.projectlombok:lombok'
-        testCompileOnly 'org.projectlombok:lombok'
-
-        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//        compileOnly 'org.springframework.boot:spring-boot-starter-tomcat'
-
-        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        dependency 'org.apache.commons:commons-lang3:3.20.0'
+        dependency 'org.apache.commons:commons-collections4:4.5.0'
+        dependency 'com.google.guava:guava:33.5.0-jre'
     }
+}
 
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8'
-    }
+dependencies {
 
-    test {
-        useJUnitPlatform()
-    }
+    implementation(
+            'org.apache.commons:commons-lang3',
+            'org.apache.commons:commons-collections4',
+            'com.google.guava:guava'
+    )
 
+    implementation(
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-webflux',
+            'org.springframework.boot:spring-boot-starter-actuator',
+            'com.baomidou:mybatis-plus-spring-boot4-starter',
+            'com.baomidou:mybatis-plus-jsqlparser'
+    )
+
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor (
+            'org.projectlombok:lombok',
+            'org.springframework.boot:spring-boot-configuration-processor'
+    )
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

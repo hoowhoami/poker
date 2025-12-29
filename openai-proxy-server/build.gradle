@@ -1,4 +1,0 @@
-dependencies {
-    implementation project(':openai-proxy-channel:openai-proxy-channel-chatgpt')
-
-}
